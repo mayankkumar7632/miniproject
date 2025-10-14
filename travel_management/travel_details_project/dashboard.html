@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard - Travel Explorer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg">
+  <nav class="navbar">
+  <div class="logo">Travel Explorer</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="register.html">Register</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="bookings.html">Bookings</a></li>
+  </ul>
+</nav>
+
+  <div class="container">
+    <h1>Welcome to Your Travel Dashboard</h1>
+    <div id="welcomeUser"></div>
+
+    <h2>Book Your Travel</h2>
+    <form id="bookingForm">
+      <input type="text" id="destination" placeholder="Destination" required />
+      <input type="date" id="travelDate" required />
+      <input type="number" id="days" placeholder="Number of Days" required />
+      <input type="text" id="hotel" placeholder="Hotel Name" required />
+      <button type="submit">Book</button>
+    </form>
+
+    <button id="viewBookingsBtn">View My Bookings</button>
+    
+    <hr style="margin: 20px 0; border: 1px solid #fff;">
+    
+    <h2>All Registered Users</h2>
+    <button id="showUsersBtn">Show All Users</button>
+    <div id="usersList" style="margin-top: 10px;"></div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById("showUsersBtn").addEventListener("click", async () => {
+      const usersList = document.getElementById("usersList");
+      usersList.innerHTML = "Loading...";
+      try {
+        const res = await fetch("http://localhost:5000/api/users/all");
+        const users = await res.json();
+        if(users.length === 0) {
+          usersList.innerHTML = "<p>No users registered yet.</p>";
+          return;
+        }
+
+        let table = "<table style='width:100%; border-collapse: collapse; color: #fff;'><tr><th>ID</th><th>Username</th><th>Email</th></tr>";
+        users.forEach(user => {
+          table += `<tr style='border-bottom:1px solid #fff;'>
+                      <td>${user.id}</td>
+                      <td>${user.username}</td>
+                      <td>${user.email}</td>
+                    </tr>`;
+        });
+        table += "</table>";
+        usersList.innerHTML = table;
+      } catch(err) {
+        console.error(err);
+        usersList.innerHTML = "<p>Error fetching users.</p>";
+      }
+    });
+  </script>
+</body>
+</html>
+
